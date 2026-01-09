@@ -309,7 +309,7 @@ export default function WaitlistPage() {
             </section>
 
             <footer className="w-full text-center py-8 text-xs font-bold text-slate-400 uppercase tracking-widest relative z-10">
-                © {new Date().getFullYear()} JUDAH Inc. • Made with ❤️ for Students
+                © {new Date().getFullYear()} JUDAH Inc. • Made by Students for Students
             </footer>
         </div>
     );
