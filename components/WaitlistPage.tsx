@@ -47,22 +47,58 @@ export default function WaitlistPage() {
     const springY = useSpring(backgroundY, { stiffness: 100, damping: 30 });
     const springRotate = useSpring(backgroundRotate, { stiffness: 100, damping: 30 });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    // const handleSubmit = (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!email || !email.includes('@')) {
+    //         setStatus('error');
+    //         // Reset error after 3 seconds
+    //         setTimeout(() => setStatus('idle'), 3000);
+    //         return;
+    //     }
+
+    //     setStatus('loading');
+    //     setTimeout(() => {
+    //         setStatus('success');
+    //         console.log('Registered email:', email);
+    //         setEmail('');
+    //     }, 1500);
+    // };
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email || !email.includes('@') || !email.includes('.edu')) {
-            setStatus('error');
-            // Reset error after 3 seconds
-            setTimeout(() => setStatus('idle'), 3000);
+
+        if (!email || !email.includes("@")) {
+            setStatus("error");
+            setTimeout(() => setStatus("idle"), 3000);
             return;
         }
 
-        setStatus('loading');
-        setTimeout(() => {
-            setStatus('success');
-            console.log('Registered email:', email);
-            setEmail('');
-        }, 1500);
+        try {
+            setStatus("loading");
+
+            const res = await fetch("https://waitlist-fkdr.onrender.com/join", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await res.json();
+            console.log("Waitlist route response:", data);
+
+            if (!res.ok) {
+                throw new Error(data.error || "Request failed");
+            }
+
+            setStatus("success");
+            setEmail("");
+        } catch (err) {
+            console.error("Frontend error:", err);
+            setStatus("error");
+            setTimeout(() => setStatus("idle"), 3000);
+        }
     };
+
+
+
 
     return (
         <div ref={containerRef} className="min-h-screen bg-slate-50 dark:bg-black font-sans text-slate-900 dark:text-white overflow-hidden relative selection:bg-indigo-500/30 selection:text-indigo-200">
@@ -82,13 +118,13 @@ export default function WaitlistPage() {
 
             <nav className="relative z-50 p-6 flex justify-between items-center max-w-7xl mx-auto">
                 <div className="flex items-center">
-                    <img src="/UniBuy.png" alt="UniBuy Logo" className="w-32 h-32 object-contain" />
-                    <span className="text-xl font-bold tracking-tight">UniBuy</span>
+                    <img src="/UniBuy.png" alt="UniBuy Logo" className="w-40 h-40 object-contain" />
+                    {/* <span className="text-xl font-bold tracking-tight ml-[-9] ">UniBuy</span> */}
                 </div>
                 <ThemeToggle />
             </nav>
 
-            <main className="relative z-10 flex flex-col items-center justify-center pt-20 pb-32 px-4 text-center">
+            <main className="relative z-10 flex flex-col items-center justify-center pt-10 pb-32 px-4 text-center">
 
                 {/* Badge */}
                 <motion.div
