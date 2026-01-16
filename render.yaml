@@ -1,0 +1,50 @@
+services:
+  # FastAPI Backend Service
+  - type: web
+    name: unibuy-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: unibuy-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: unibuy-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: SMTP_TLS
+        value: "true"
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_HOST
+        sync: false # User must set this in Render Dashboard
+      - key: SMTP_USER
+        sync: false # User must set this in Render Dashboard
+      - key: SMTP_PASSWORD
+        sync: false # User must set this in Render Dashboard
+      - key: EMAILS_FROM_EMAIL
+        sync: false # User must set this in Render Dashboard
+      - key: EMAILS_FROM_NAME
+        value: "Unibuy"
+      - key: SENDGRID_API_KEY
+        sync: false # User must set this in Render Dashboard
+
+  # Redis Service for Rate Limiting
+  - type: redis
+    name: unibuy-redis
+    plan: free
+    ipAllowList: [] # Internal access only
+
+databases:
+  # PostgreSQL Database
+  - name: unibuy-db
+    plan: free

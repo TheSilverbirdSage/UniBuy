@@ -4,6 +4,26 @@ from email.mime.multipart import MIMEMultipart
 from core.config import settings
 
 def send_email(email_to: str, subject: str, html_content: str):
+    # Try SendGrid first if API key is available
+    if settings.SENDGRID_API_KEY:
+        try:
+            from sendgrid import SendGridAPIClient
+            from sendgrid.helpers.mail import Mail as SendGridMail
+            
+            message = SendGridMail(
+                from_email=(settings.EMAILS_FROM_EMAIL, settings.EMAILS_FROM_NAME),
+                to_emails=email_to,
+                subject=subject,
+                html_content=html_content
+            )
+            sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+            response = sg.send(message)
+            print(f"SUCCESS: Email sent via SendGrid to {email_to} (Status: {response.status_code})")
+            return
+        except Exception as e:
+            print(f"ERROR: SendGrid failed: {e}. Falling back to SMTP...")
+
+    # Fallback to SMTP
     if not settings.SMTP_HOST:
         print("DEBUG: SMTP_HOST is not set. Check if your .env file is being loaded correctly.")
         return

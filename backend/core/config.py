@@ -8,8 +8,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ENV_FILE = str(BASE_DIR / ".env")
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql+psycopg2://postgres:Tomiwa2006@localhost/unibuy_db"
-    SECRET_KEY: str = "4d44a5726f355c7173d6c4a027b7325d221ba67c82305d9abbde069ed14ed61a"
+    DATABASE_URL: str 
+    SECRET_KEY: str 
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: Optional[str] = None
     EMAILS_FROM_EMAIL: Optional[str] = None
     EMAILS_FROM_NAME: Optional[str] = "Unibuy"
+    
+    # SendGrid Configuration
+    SENDGRID_API_KEY: Optional[str] = None
     
     # Redis Configuration
     REDIS_URL: str = "redis://localhost:6379"
